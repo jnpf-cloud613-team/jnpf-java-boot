@@ -1,0 +1,52 @@
+databaseName: myshardingsphere
+dataSources: # 数据源配置 =============
+  #  <数据源_0>: # 自定义数据源名称
+  #    dataSourceClassName: com.zaxxer.hikari.HikariDataSource # 连接池提供方完整类名（Spring默认Hikari）
+  #    driverClassName: com.mysql.jdbc.Driver # JDBC驱动
+  #    jdbcUrl: jdbc:mysql://{host}:{port}/{dbName}?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8 # 数据库连接URL
+  #    username: {username} # 用户
+  #    password: {password} # 密码
+  ds0: # 自定义数据源名称
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource # 连接池提供方完整类名（Spring默认Hikari）
+    driverClassName: com.mysql.cj.jdbc.Driver # JDBC驱动
+    url: jdbc:mysql://127.0.0.1:3306/sharding1?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8 # 数据库连接URL
+    username: root # 用户
+    password: 123456 # 密码
+  ds1: # 自定义数据源名称
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource # 连接池提供方完整类名（Spring默认Hikari）
+    driverClassName: com.mysql.cj.jdbc.Driver # JDBC驱动
+    url: jdbc:mysql://127.0.0.1:3306/sharding2?serverTimezone=UTC&useSSL=false&useUnicode=true&characterEncoding=UTF-8 # 数据库连接URL
+    username: root # 用户
+    password: 123456 # 密码
+rules: # 规则 =============
+  - !SHARDING # 注意类似“- !SHARDING”标识不能省略
+    tables:
+      ext_big_data: # 自定义逻辑表名
+        actualDataNodes: ds${0..1}.ext_big_data_$->{0..1} # 由数据源名 + 表名组成（参考 Inline 语法规则）
+        databaseStrategy:
+          standard:
+            shardingColumn: F_Id # 分表依据字段
+            shardingAlgorithmName: myDataSourceAlgorithm
+        tableStrategy: # 表策略 -------
+          standard:
+            shardingColumn: F_Id # 分表依据字段
+            shardingAlgorithmName: myTableAlgorithm
+
+    #  defaultDatabaseStrategy: # 库策略 -------
+    #    standard:
+    #      shardingColumn: F_Id
+    #      shardingAlgorithmName: myDataSourceAlgorithm
+    shardingAlgorithms: # 分片算法 -------
+      myDataSourceAlgorithm: # 自定义算法名
+        type: INLINE
+        props:
+          algorithm-expression: ds${(long)(Long.parseLong(F_Id)/10) % 2}
+      myTableAlgorithm: # 自定义算法名
+        type: INLINE
+        props:
+          algorithm-expression: ext_big_data_${(long)(Long.parseLong(F_Id)/10 / 2) % 2}
+#  keyGenerators:
+#    dsKey: # 自定义主键策略名
+#      type: SNOWFLAKE
+props:
+  sql-show: true

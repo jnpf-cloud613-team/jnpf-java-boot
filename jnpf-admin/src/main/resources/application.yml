@@ -1,0 +1,160 @@
+spring:
+  application:
+    name: jnpf-boot
+  profiles:
+    # 指定环境配置 dev(开发环境-默认)、test(测试环境)、preview(预生产)、prod(生产环境)
+    active: dev
+  servlet:
+    multipart: #文件传输配置
+      max-file-size: 100MB #单个数据大小限制
+      max-request-size: 100MB #请求总数据大小限制
+      enabled: true  #是否启用分段上传支持
+  mvc:
+    #csrf-origins: ${config.FrontDomain}
+    cors:
+      # 允许跨域的域名
+      #allowed-origins: ${config.FrontDomain}
+      # 允许跨域的域名正则匹配 如需全部匹配设置为 '**', 因为包含凭据的请求不允许直接写* 这个写法可以直接返回当前请求域名
+      allowed-origin-patterns: '**'
+      # 允许跨域的请求方法 GET, POST, PUT, DELETE
+      allowed-methods: "*"
+      # 允许跨域的头部信息 Content-Type, Authorization
+      allowed-headers: "*"
+      options-max-age: 18000
+    headers:
+      server-name: ''
+      # 是否允许在frame中被加载
+      x-frame-options: sameorigin
+      # MIME嗅探
+      x-content-type-options: disabled
+      # XSS保护
+      x-xss-protection: enabled_mode_block
+    hiddenmethod: #隐式方法过滤器
+      filter:
+        enabled: true #默认开启。开启以支持：PUT,DELETE表单提交方法
+  jackson: #序列化和反序列化json框架
+    serialization:
+      write-dates-as-timestamps: true #是否写入日期时间时间戳格式
+    time-zone: GMT+8 #指定日期格式化时区
+  main:
+    allow-bean-definition-overriding: true #允许同名bean后者覆盖,默认：true
+    allow-circular-references: false #允许Bean相互引用,默认：false
+config:
+  # ===============域名配置==================
+  # 后端域名(消息跳转、第三方登录回调、工作流表单数据流转使用)
+  ApiDomain: http://127.0.0.1:30000
+  # 前端域名
+  FrontDomain: http://127.0.0.1:3100
+  # app/h5端域名配置
+  AppDomain: http://127.0.0.1:8080
+  # 流程引擎接口地址
+  FlowDomain: http://127.0.0.1:31000
+  # 报表接口地址
+  ReportDomain: http://127.0.0.1:32000
+  # 旧报表接口地址
+  OldReportDomain: http://127.0.0.1:30007
+
+  # ===============静态资源目录映射==================
+  WebAnnexFilePath: WebAnnexFile
+  DataBackupFilePath: DataBackupFile
+  TemporaryFilePath: TemporaryFile
+  SystemFilePath: SystemFile
+  TemplateFilePath: TemplateFile
+  EmailFilePath: EmailFile
+  DocumentFilePath: DocumentFile
+  DocumentPreviewPath: DocumentPreview
+  UserAvatarFilePath: UserAvatar
+  IMContentFilePath: IMContentFile
+  MPMaterialFilePath: MPMaterial
+  TemplateCodePath: TemplateCode
+  BiVisualPath: BiVisualPath
+
+  # ===============功能格式限制==================
+  AllowUploadImageType: jpg,gif,png,bmp,jpeg,tiff,psd,swf,svg,pcx,dxf,wmf,emf,lic,eps,tga #允许上传图片类型
+  AllowUploadFileType: jpg,gif,png,bmp,jpeg,doc,docx,ppt,pptx,xls,xlsx,pdf,txt,rar,zip,csv,mp3,aac #允许上传文件类型
+  AllowPreviewFileType: doc,docx,xls,xlsx,ppt,pptx,pdf,jpg,gif,png,bmp,jpeg,txt #允许预览文件类型
+  PreviewType: kkfile #文件预览方式 （1.yozo 2.kkfile）默认使用kkfile
+  # kkfile文件预览服务地址
+  kkFileUrl: http://127.0.0.1:30090/FileServer/
+
+  #===================== 多租户配置 =====================
+  MultiTenancy: false #是否开启
+  MultiTenancyUrl: http://127.0.0.1:30006/api/tenant/DbName/ #多租户项目地址
+#  MultiTenancyUrl: http://127.0.0.1:30013/api/Saas/tenant/ #多租户项目地址
+  MultiTenancyVersion: 1 #1-旧租户，2-新租户
+  MultiTenancyAppCode:  #新租户模式中填写应用编码
+
+  #===================== 系统及错误报告反馈相关 =====================
+  SoftName: jnpf-java-boot #项目名
+  SoftFullName: JNPF快速开发平台 #项目全名
+  SoftVersion: V6.1.0 #版本号
+  Email: surrpot@yinmaisoft.com #软件错误报告接收者
+
+  #===================== APP =====================
+  AppVersion: V6.1.0 #APP版本号
+  AppUpdateContent: ; #APP更新内容
+
+  #===================== 永中office在线预览配置 =====================
+  YozoDomain: //dcsapi.com/ #永中api域名
+  YozoDomainKey: 57462250284462899305150 #域名key
+  YozoCloudDomain: //dmc.yozocloud.cn #云预览
+  YozoAppId: yozoAgR41jgC0062 #appid
+  YozoAppKey: fc3134a9ba8bc6f4c69d635f9adf #app秘钥
+  YozoEditDomain: //eic.yozocloud.cn #云编辑
+
+  #===================== 系统功能配置 =====================
+  EnableLogicDelete: false #是否开启逻辑删除
+  CodeCertificateTimeout: 180 # 秒
+  check-file-pdf: false #检查上传的PDF文件安全
+
+security:
+  # AES加密秘钥
+  security-key: EY8WePvjM5GGwQzn
+  # 是否开启接口鉴权
+  enable-pre-auth: true
+  # 接口加密
+  enable-rest-encrypt: true
+
+# 事件配置
+event:
+  # 默认时间发布、监听渠道: local, redis, mq
+  event-publish-type: redis
+  # Redis监听模式：current, all
+  redis-publish-type: current
+
+# 接口放行地址 与GatewayWhite中的默认URL合并
+gateway:
+  # 禁止访问接口
+  block-url:
+  ## 配置示例
+  # 放行这个接口
+  #- /api/message/Notice
+  # 放行Users后面一级接口
+  #- /api/permission/Users/*
+  # 放行Login后面所有层级的接口
+  #- /api/oauth/Login/**
+  # 不验证Token, 放行接口（默认记录日志）
+  white-url:
+  # 放行接口(不记录日志)
+  exclude-url:
+  # 入站IP（禁止配置以外的IP访问block-url配置的接口）
+  white-ip:
+  #- 192.168.
+  #- 192.168.0.
+  #- 192.168.0.20
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    #自定义第三方包名日志等级
+    # 解除注释后Druid连接池打印SQL语句
+    druid.sql.Statement: debug
+#    druid.sql.DataSource: debug
+#    druid.sql.Connection: debug
+#    druid.sql.ResultSet: debug
+log:
+  level:
+    # 等级 TRACE,DEBUG,INFO,WARN,ERROR(不区分大小写)
+    root: info
+  path: log/${spring.application.name}

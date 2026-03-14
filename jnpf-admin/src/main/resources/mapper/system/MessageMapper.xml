@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.message.mapper.MessageMapper">
+
+    <resultMap id="Message" type="jnpf.message.entity.MessageReceiveEntity">
+        <id column="f_id" property="id"/>
+        <result column="f_title" property="title"/>
+        <result column="f_type" property="type"/>
+        <result column="f_creator_time" property="creatorTime"/>
+        <result column="f_creator_user_id" property="creatorUserId"/>
+        <result column="f_last_modify_time" property="lastModifyTime"/>
+        <result column="f_enabled_mark" property="enabledMark"/>
+        <result column="f_is_read" property="isRead"/>
+        <result column="f_last_modify_user_id" property="lastModifyUserId"/>
+    </resultMap>
+
+    <select id="getMessageList" parameterType="map" resultMap="Message">
+        SELECT  r.f_id, r.f_title, r.f_type, r.f_is_read, r.f_creator_time, r.f_creator_user_id, r.f_last_modify_time, r.f_last_modify_user_id,
+        u.f_real_name,u.f_account FROM base_message r
+        LEFT JOIN base_user u ON u.f_id = r.f_user_id where 1 = 1
+        <if test="map.userId != null">
+            AND r.f_user_id= #{map.userId}
+        </if>
+        <if test="map.keyword != null">
+            AND (r.f_title like #{map.keyword} OR u.f_real_name LIKE #{map.keyword} OR u.f_account LIKE #{map.keyword})
+        </if>
+        <if test="map.type != null">
+            AND r.f_type = #{map.type}
+        </if>
+        <if test="map.isRead != null">
+            AND r.f_is_read = #{map.isRead}
+        </if>
+        ORDER BY r.f_last_modify_time desc
+    </select>
+
+    <select id="getUnreadCount" resultType="int">
+        SELECT COUNT(1)  FROM base_message
+        WHERE f_user_id = #{userId} AND f_is_read = 0 AND f_type = #{type}
+    </select>
+
+    <select id="getInfoDefault" parameterType="int" resultMap="Message">
+        SELECT * FROM base_message WHERE 1 = 1 AND f_type = #{type} ORDER BY f_creator_time DESC
+    </select>
+
+</mapper>

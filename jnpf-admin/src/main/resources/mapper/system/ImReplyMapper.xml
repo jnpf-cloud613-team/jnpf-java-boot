@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.message.mapper.ImReplyMapper">
+	<resultMap id="imReplyList" type="jnpf.message.model.ImReplyListModel">
+		<id column="f_receive_user_id" property="id"/>
+		<result column="f_user_id" property="userId"/>
+		<result column="F_HEAD_ICON" property="headIcon"/>
+		<result column="f_receive_time" property="latestDate"/>
+		<result column="f_content_type" property="messageType"/>
+		<result column="f_content" property="latestMessage"/>
+		<result column="f_delete_user_id" property="deleteUserId"/>
+		<result column="f_delete_mark" property="deleteMark"/>
+		<result column="imreplydeleteuser" property="imreplyDeleteUser"/>
+	</resultMap>
+
+	<select id="getImReplyList" resultMap="imReplyList" parameterType="jnpf.message.model.ImReplyListVo">
+         SELECT
+        	ir.f_user_id,
+			ir.f_receive_user_id,
+			ir.f_delete_user_id as imreplydeleteuser,
+			bu.F_HEAD_ICON,
+			ir.f_receive_time,
+			ic.f_content_type,
+			ic.f_content,
+			ic.f_delete_user_id,
+            ic.f_delete_mark
+		FROM
+			base_im_reply ir
+			LEFT JOIN base_user bu ON ir.f_user_id = bu.F_Id
+			LEFT JOIN base_im_content ic ON ic.f_send_user_id = bu.F_Id
+			AND ir.f_user_id = ic.f_send_user_id
+			AND ir.f_receive_user_id = ic.f_receive_user_id
+			AND ir.f_receive_time = ic.f_send_time
+			AND (ir.f_delete_mark != 1 OR ir.f_delete_mark IS NULL)
+    </select>
+</mapper>

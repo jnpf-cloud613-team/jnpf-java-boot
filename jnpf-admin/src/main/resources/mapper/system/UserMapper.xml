@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.permission.mapper.UserMapper">
+
+    <select id="getListId" resultType="java.lang.String">
+        SELECT F_Id from base_user WHERE F_Enabled_Mark = 1
+    </select>
+
+    <select id="query" resultType="java.lang.String">
+        SELECT F_Id FROM
+        (SELECT DISTINCT u.F_Id,u.F_Sort_Code,u.F_Creator_Time
+        FROM base_user_relation ul1,base_user u
+        WHERE u.F_Id = ul1.F_User_Id
+        AND u.f_account != 'admin'
+        <if test="enabledMark != null">
+            AND u.f_enabled_mark = #{enabledMark}
+        </if>
+        <if test="gender != null and gender != ''">
+            AND u.f_gender = #{gender}
+        </if>
+        <if test="account != null and account != ''">
+            and (u.F_Account like #{account} or u.F_Real_Name like #{account} or u.F_Mobile_Phone like
+            #{account})
+        </if>
+        <if test="orgIdList != null and orgIdList.size > 0">
+            AND (ul1.F_Object_Id IN
+            <trim suffixOverrides=" OR ul1.F_Object_Id IN()">
+                <foreach collection="orgIdList" item="orgIds" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR ul1.F_Object_Id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{orgIds}
+                </foreach>
+            </trim>
+            )
+        </if>
+        ORDER BY u.F_Sort_Code ASC,u.F_Creator_Time DESC) uu
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT count(F_Id) FROM
+        (SELECT DISTINCT u.F_Id,u.F_Sort_Code,u.F_Creator_Time
+        FROM base_user_relation ul1,base_user u
+        WHERE u.F_Id = ul1.F_User_Id
+        AND u.F_Account != 'admin'
+        <if test="enabledMark != null">
+            AND u.f_enabled_mark = #{enabledMark}
+        </if>
+        <if test="gender != null and gender != ''">
+            AND u.f_gender = #{gender}
+        </if>
+        <if test="account != null and account != ''">
+            and (u.F_Account like #{account} or u.F_Real_Name like #{account} or u.F_Mobile_Phone like
+            #{account})
+        </if>
+        <if test="orgIdList != null and orgIdList.size > 0">
+            AND (ul1.F_Object_Id IN
+            <trim suffixOverrides=" OR ul1.F_Object_Id IN()">
+                <foreach collection="orgIdList" item="orgIds" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR ul1.F_Object_Id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{orgIds}
+                </foreach>
+            </trim>
+            )
+        </if>) uu
+    </select>
+
+</mapper>

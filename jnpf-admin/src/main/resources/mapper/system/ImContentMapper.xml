@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.message.mapper.ImContentMapper">
+
+    <select id="getUnreadList" parameterType="String" resultType="jnpf.message.model.ImUnreadNumModel">
+        SELECT * FROM (
+            SELECT SUM(CASE WHEN f_enabled_mark = 0 THEN 1 ELSE 0 END) UnreadNum, f_send_user_id SendUserId, f_receive_user_id ReceiveUserId
+            FROM base_im_content WHERE 1 = 1 AND f_receive_user_id = #{receiveUserId} GROUP BY f_send_user_id, f_receive_user_id
+        ) t WHERE UnreadNum > 0
+    </select>
+
+    <select id="getUnreadLists" parameterType="String" resultType="jnpf.message.model.ImUnreadNumModel">
+        select f_send_user_id SendUserId, f_content DefaultMessage,f_content_type DefaultMessageType, f_send_time DefaultMessageTime from base_im_content WHERE 1 = 1 AND f_receive_user_id = #{receiveUserId} AND f_enabled_mark = 0 order by f_send_time desc
+    </select>
+
+    <update id="readMessage" parameterType="map">
+        UPDATE base_im_content SET f_enabled_mark = 1, f_receive_time = #{map.receiveTime} WHERE 1 = 1 AND f_enabled_mark = 0 AND f_send_user_id = #{map.sendUserId} AND f_receive_user_id = #{map.receiveUserId}
+    </update>
+
+</mapper>

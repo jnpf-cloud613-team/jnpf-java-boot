@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>jnpf-flowable</artifactId>
+        <groupId>com.jnpf</groupId>
+        <version>6.1.0-RELEASE</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>jnpf-flowable-biz</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-flowable-entity</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-generater-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-system-biz</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-permission-biz</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-visualdev-base-biz</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jnpf</groupId>
+            <artifactId>jnpf-common-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,0 +1,52 @@
+package jnpf.base.util;
+
+
+import java.util.Arrays;
+
+/**
+ *
+ * @author JNPF开发平台组
+ * @version V3.1.0
+ * @copyright 引迈信息技术有限公司
+ * @date 2021/3/12 15:31
+ */
+public class OptimizeUtil {
+    OptimizeUtil(){
+
+    }
+
+    /**
+     * 允许文件类型
+     *
+     * @param fileType      文件所有类型
+     * @param fileExtension 当前文件类型
+     * @return
+     */
+    public static boolean fileType(String fileType, String fileExtension) {
+        String[] allowExtension = fileType.split(",");
+        return Arrays.asList(allowExtension).contains(fileExtension.toLowerCase());
+    }
+
+    /**
+     * 允许图片类型
+     *
+     * @param imageType     图片所有类型
+     * @param fileExtension 当前图片类型
+     * @return
+     */
+    public static boolean imageType(String imageType, String fileExtension) {
+        return fileType(imageType, fileExtension);
+    }
+
+    /**
+     * 允许上传大小
+     *
+     * @param fileSize 文件大小
+     * @param maxSize  最大的文件
+     * @return
+     */
+    public static boolean fileSize(Long fileSize, int maxSize) {
+        return fileSize > maxSize;
+    }
+
+}

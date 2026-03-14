@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.permission.mapper.RoleMapper">
+
+    <select id="getListId" resultType="java.lang.String">
+        SELECT * FROM base_role WHERE F_ID IN(SELECT F_OBJECT_ID  FROM base_user_relation WHERE F_USER_ID = #{userId}) ORDER BY F_SORT_CODE
+    </select>
+
+    <select id="query" resultType="java.lang.String">
+        SELECT F_Id FROM base_role
+        <if test="globalMark != 1">
+            WHERE 1 = 1
+            AND F_Id IN (
+            SELECT DISTINCT
+            a.F_Id
+            FROM
+            (
+            SELECT
+            br.F_Id
+            FROM
+            base_organize bo
+            LEFT JOIN base_organize_relation bor ON bo.F_Id = bor.F_Organize_Id
+            LEFT JOIN base_role br ON br.F_Id = bor.F_Object_Id
+            WHERE
+            bor.F_Object_Type = 'Role'
+            AND bor.F_Object_Type IS NOT NULL
+            <if test="orgIdList != null and orgIdList.size() != 0">
+                AND bo.F_Id IN
+                <foreach collection="orgIdList"
+                         item="orgIds" index="index" separator="," open="(" close=")">
+                    #{orgIds}
+                </foreach>
+            </if>
+            ) a
+            )
+        </if>
+        <if test="globalMark == -1 or globalMark == 1">
+            <if test="globalMark != 1">
+                OR
+            </if>
+            <if test="globalMark == 1">
+                Where
+            </if>
+            F_Id IN
+            (
+            SELECT F_Id FROM base_role WHERE F_Global_Mark = 1
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (F_Full_Name LIKE #{keyword} OR F_En_Code LIKE #{keyword})
+        </if>
+        <if test="enabledMark != null">
+            AND (f_enabled_Mark =  #{enabledMark})
+        </if>
+        ORDER BY f_sort_code asc, f_creator_time desc
+    </select>
+
+    <select id="count" resultType="java.lang.Long">
+        SELECT count(F_Id) FROM base_role
+        <if test="globalMark != 1">
+            WHERE 1 = 1
+            AND F_Id IN (
+            SELECT DISTINCT
+            a.F_Id
+            FROM
+            (
+            SELECT
+            br.F_Id
+            FROM
+            base_organize bo
+            LEFT JOIN base_organize_relation bor ON bo.F_Id = bor.F_Organize_Id
+            LEFT JOIN base_role br ON br.F_Id = bor.F_Object_Id
+            WHERE
+            bor.F_Object_Type = 'Role'
+            AND bor.F_Object_Type IS NOT NULL
+            <if test="orgIdList != null and orgIdList.size() != 0">
+                AND bo.F_Id IN
+                <foreach collection="orgIdList"
+                         item="orgIds" index="index" separator="," open="(" close=")">
+                    #{orgIds}
+                </foreach>
+            </if>
+            ) a
+            )
+        </if>
+        <if test="globalMark == -1 or globalMark == 1">
+            <if test="globalMark != 1">
+                OR
+            </if>
+            <if test="globalMark == 1">
+                Where
+            </if>
+            F_Id IN
+            (
+            SELECT F_Id FROM base_role WHERE F_Global_Mark = 1
+            )
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (F_Full_Name LIKE #{keyword} OR F_En_Code LIKE #{keyword})
+        </if>
+        <if test="enabledMark != null">
+            AND (f_enabled_Mark =  #{enabledMark})
+        </if>
+    </select>
+
+</mapper>

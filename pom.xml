@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.jnpf</groupId>
+        <artifactId>jnpf-common</artifactId>
+        <version>6.1.0-RELEASE</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jnpf</groupId>
+    <artifactId>jnpf-java-boot</artifactId>
+    <packaging>pom</packaging>
+    <version>6.1.0-RELEASE</version>
+
+    <modules>
+        <module>jnpf-admin</module>
+        <module>jnpf-oauth</module>
+        <module>jnpf-system</module>
+        <module>jnpf-public/jnpf-common-all</module>
+        <module>jnpf-example</module>
+        <module>jnpf-extend</module>
+        <module>jnpf-visualdev</module>
+<!--        <module>jnpf-workflow</module>-->
+        <module>jnpf-file</module>
+        <module>jnpf-exception</module>
+        <module>jnpf-visualdata</module>
+        <module>jnpf-app</module>
+        <module>jnpf-permission</module>
+        <module>jnpf-scheduletask</module>
+        <module>jnpf-message</module>
+        <module>jnpf-public/jnpf-provider</module>
+        <module>jnpf-public/jnpf-generater-base</module>
+        <module>jnpf-flowable</module>
+    </modules>
+
+    <properties>
+        <!--项目打包时lib目录位置, 不能使用Windows盘符D:/, /代表从磁盘根目录开始-->
+        <external-lib-out-path>${project.build.directory}/external-lib/</external-lib-out-path>
+        <!--项目启动时lib目录位置, 不能使用Windows盘符D:/, /代表从磁盘根目录开始-->
+        <external-lib-start-path>external-lib/</external-lib-start-path>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+
+</project>

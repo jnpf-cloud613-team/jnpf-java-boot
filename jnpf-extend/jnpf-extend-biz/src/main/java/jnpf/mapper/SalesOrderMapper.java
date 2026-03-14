@@ -1,0 +1,27 @@
+package jnpf.mapper;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import jnpf.base.mapper.SuperMapper;
+import jnpf.entity.SalesOrderEntity;
+
+/**
+ * 销售订单
+ *
+ * @author JNPF开发平台组
+ * @version V3.1.0
+ * @copyright 引迈信息技术有限公司
+ * @date 2019年9月29日 上午9:18
+ */
+public interface SalesOrderMapper extends SuperMapper<SalesOrderEntity> {
+
+    default SalesOrderEntity getInfo(String id) {
+        QueryWrapper<SalesOrderEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(SalesOrderEntity::getId, id);
+        return this.selectOne(queryWrapper);
+    }
+
+    default void delete(SalesOrderEntity entity) {
+        this.deleteById(entity);
+    }
+
+}

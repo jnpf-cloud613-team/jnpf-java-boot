@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jnpf.permission.mapper.AuthorizeMapper">
+
+    <resultMap id="ModuleVO" type="jnpf.base.model.module.ModuleModel">
+        <id column="f_id" property="id"/>
+        <result column="f_parent_id" property="parentId"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_type" property="type"/>
+        <result column="f_url_address" property="urlAddress"/>
+        <result column="f_page_address" property="pageAddress"/>
+        <result column="f_link_target" property="linkTarget"/>
+        <result column="f_category" property="category"/>
+        <result column="f_icon" property="icon"/>
+        <result column="f_sort_code" property="sortCode"/>
+        <result column="f_property_json" property="propertyJson"/>
+        <result column="f_module_id" property="moduleId"/>
+        <result column="f_system_id" property="systemId"/>
+        <result column="f_description" property="description"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+        <result column="f_no_show" property="noShow"/>
+    </resultMap>
+
+    <resultMap id="ButtonVO" type="jnpf.base.model.button.ButtonModel">
+        <id column="f_id" property="id"/>
+        <result column="f_parent_id" property="parentId"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_icon" property="icon"/>
+        <result column="f_url_address" property="urlAddress"/>
+        <result column="f_module_id" property="moduleId"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+        <result column="f_sort_code" property="sortCode"/>
+    </resultMap>
+
+    <resultMap id="ColumnVO" type="jnpf.base.model.column.ColumnModel">
+        <id column="f_id" property="id"/>
+        <result column="f_parent_id" property="parentId"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_bind_table" property="bindTable"/>
+        <result column="f_bind_table_name" property="bindTableName"/>
+        <result column="f_module_id" property="moduleId"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+        <result column="f_sort_code" property="sortCode"/>
+    </resultMap>
+
+    <resultMap id="ResourceVO" type="jnpf.base.model.resource.ResourceModel">
+        <id column="f_id" property="id"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_condition_json" property="conditionJson"/>
+        <result column="f_condition_text" property="conditionText"/>
+        <result column="f_module_id" property="moduleId"/>
+        <result column="f_match_logic" property="matchLogic"/>
+        <result column="f_object_id" property="objectId"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+        <result column="f_sort_code" property="sortCode"/>
+    </resultMap>
+
+    <resultMap id="FormVO" type="jnpf.base.model.form.ModuleFormModel">
+        <id column="f_id" property="id"/>
+        <result column="f_parent_id" property="parentId"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_module_id" property="moduleId"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+        <result column="f_sort_code" property="sortCode"/>
+    </resultMap>
+
+    <resultMap id="SystemVO" type="jnpf.base.model.base.SystemBaeModel">
+        <id column="f_id" property="id"/>
+        <result column="f_full_name" property="fullName"/>
+        <result column="f_en_code" property="enCode"/>
+        <result column="f_icon" property="icon"/>
+        <result column="f_property_json" property="propertyJson"/>
+        <result column="f_description" property="description"/>
+        <result column="f_sort_code" property="sortCode"/>
+        <result column="f_enabled_mark" property="enabledMark"/>
+        <result column="f_workflow_enabled" property="workflowEnabled"/>
+        <result column="f_navigation_icon" property="navigationIcon"/>
+        <result column="f_work_logo_icon" property="workLogoIcon"/>
+        <result column="f_creator_time" property="creatorTimes"/>
+    </resultMap>
+
+    <select id="findModule" parameterType="String" resultMap="ModuleVO">
+        SELECT * FROM base_module WHERE 1=1
+        AND (f_id IN
+            <trim suffixOverrides=" OR f_id IN()">
+                <foreach collection="objectId" item="id" index="index" open="(" close=")" >
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR f_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{id}
+                </foreach>
+            </trim>
+        )
+        <if test="mark == 1">
+            and f_enabled_mark = #{mark}
+        </if>
+        <if test="systemId != null and systemId.size > 0">
+            and f_system_id in
+            <foreach collection="systemId" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        </if>
+        <if test="moduleAuthorize != null and moduleAuthorize.size > 0">
+            and f_id not in
+            <foreach collection="moduleAuthorize" item="moduleId" open="(" close=")" separator=",">
+                #{moduleId}
+            </foreach>
+        </if>
+        <if test="moduleAuthorize != null and moduleAuthorize.size > 0">
+            and f_en_code not in
+            <foreach collection="moduleAuthorize" item="moduleId" open="(" close=")" separator=",">
+                #{moduleId}
+            </foreach>
+        </if>
+        <if test="moduleUrlAddressAuthorize != null and moduleUrlAddressAuthorize.size > 0">
+            and
+            ((f_url_address not in
+            <foreach collection="moduleUrlAddressAuthorize" item="urlAddress" open="(" close=")" separator=",">
+                #{urlAddress}
+            </foreach>
+            )
+            or f_url_address is null
+            )
+        </if>
+        Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findButton" parameterType="String" resultMap="ButtonVO">
+        SELECT * FROM base_module_button WHERE 1=1
+        AND (f_id IN
+            <trim suffixOverrides=" OR f_id IN()">
+                <foreach collection="objectId" item="id" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR f_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{id}
+                </foreach>
+            </trim>
+        )
+        and f_enabled_mark = 1  Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+
+    <select id="findColumn" parameterType="String" resultMap="ColumnVO">
+        SELECT * FROM base_module_column WHERE 1=1
+        AND (f_id IN
+            <trim suffixOverrides=" OR f_id IN()">
+                <foreach collection="objectId" item="id" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR f_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{id}
+                </foreach>
+            </trim>
+        )
+        and f_enabled_mark = 1  Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findForms" parameterType="String" resultMap="FormVO">
+        SELECT * FROM base_module_form WHERE 1=1
+        AND (f_id IN
+            <trim suffixOverrides=" OR f_id IN()">
+                <foreach collection="objectId" item="id" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR f_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{id}
+                </foreach>
+            </trim>
+        )
+        and f_enabled_mark = 1  Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findSystem" parameterType="String" resultMap="SystemVO">
+        SELECT * FROM base_system WHERE f_id IN
+        <foreach collection="objectId" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        <if test="mark == 1">
+            and f_enabled_mark = #{mark}
+        </if>
+        <if test="enCode != null and enCode != ''">
+            and f_en_code != #{enCode}
+        </if>
+        <if test="moduleAuthorize != null and moduleAuthorize.size > 0">
+            and f_id not in
+                <foreach collection="moduleAuthorize" item="moduleId" open="(" close=")" separator=",">
+                    #{moduleId}
+                </foreach>
+        </if>
+         Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findResource" parameterType="String" resultMap="ResourceVO">
+        select s.*, a.f_object_id from base_module_scheme s
+        LEFT JOIN base_authorize a on s.f_id = a.f_item_id
+        where 1=1
+        AND (s.f_id IN
+            <trim suffixOverrides=" OR s.f_id IN()">
+                <foreach collection="objectId" item="id" index="index" open="(" close=")">
+                    <if test="index != 0">
+                        <choose>
+                            <when test="index % 1000 == 999">) OR s.f_id IN (</when>
+                            <otherwise>,</otherwise>
+                        </choose>
+                    </if>
+                    #{id}
+                </foreach>
+            </trim>
+        )
+        and s.f_enabled_mark = 1  Order by s.f_sort_code asc,s.f_creator_time desc
+    </select>
+
+    <select id="findButtonAdmin" parameterType="Integer" resultMap="ButtonVO">
+       SELECT * FROM base_module_button WHERE f_enabled_mark = #{mark} Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findColumnAdmin" parameterType="Integer" resultMap="ColumnVO">
+        SELECT * FROM base_module_column WHERE f_enabled_mark = #{mark} Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findFormsAdmin" parameterType="Integer" resultMap="FormVO">
+       SELECT * FROM base_module_form WHERE f_enabled_mark = #{mark} Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+    <select id="findResourceAdmin" parameterType="Integer" resultMap="ResourceVO">
+       SELECT * FROM base_module_scheme WHERE f_enabled_mark = #{mark} Order by f_sort_code asc,f_creator_time desc
+    </select>
+
+
+</mapper>
